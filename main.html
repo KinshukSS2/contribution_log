@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pull Request Log — KinshukSS2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0f0d;
+    --panel: #0e1512;
+    --border: rgba(255,255,255,.09);
+    --border-strong: rgba(255,255,255,.16);
+    --text: #ece9e0;
+    --text-body: #a7a79d;
+    --text-dim: #6d6d64;
+    --accent: #45d6c4;
+    --merged: #5fd08a;
+    --reported: #dba449;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text-body);
+    font-family:'Inter', sans-serif;
+    font-size: 15.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page{ display:flex; min-height:100vh; }
+
+  /* ---------- sidebar ---------- */
+  .sidebar{
+    width: 288px;
+    flex: none;
+    border-right: 1px solid var(--border);
+    padding: 40px 26px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .brand{ display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+  .brand-mark{ width:9px; height:9px; background: var(--accent); transform: rotate(45deg); flex:none; }
+  .brand-name{ font-family:'Source Serif 4', serif; font-weight:600; font-size:1.2rem; color: var(--text); }
+  .brand-sub{
+    font-family:'JetBrains Mono', monospace;
+    font-size:.66rem;
+    letter-spacing:.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 0 0 32px;
+  }
+
+  .nav{ list-style:none; margin:0 0 30px; padding:0; display:flex; flex-direction:column; gap:1px; }
+  .nav a{
+    display:flex; gap:12px; align-items:baseline;
+    text-decoration:none; color: var(--text-body);
+    font-size:.92rem; padding:7px 6px; border-radius:3px;
+    transition: color .15s ease, background .15s ease;
+  }
+  .nav a .n{ font-family:'JetBrains Mono', monospace; font-size:.7rem; color: var(--text-dim); width:1.5em; flex:none; }
+  .nav a:hover{ color: var(--text); background: rgba(255,255,255,.035); }
+  .nav a:hover .n{ color: var(--accent); }
+
+  .sidebar-rule{ border:none; border-top:1px solid var(--border); margin: 4px 0 24px; }
+
+  .sidebar-block{ margin-bottom: 22px; }
+  .sidebar-block h4{
+    font-family:'JetBrains Mono', monospace;
+    font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
+    color: var(--text-dim); margin:0 0 10px; font-weight:500;
+  }
+  .sidebar-block a{ display:block; font-size:.85rem; color: var(--text-body); text-decoration:none; padding:3px 0; }
+  .sidebar-block a:hover{ color: var(--accent); }
+
+  /* ---------- main ---------- */
+  .main{ flex:1; min-width:0; padding: 56px 60px 100px; max-width: 920px; }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:.78rem; letter-spacing:.1em; text-transform:uppercase;
+    color: var(--accent); margin:0 0 18px;
+  }
+  h1.headline{
+    font-family:'Source Serif 4', serif; font-weight:600;
+    font-size: clamp(2.1rem, 4vw, 2.9rem); line-height:1.15;
+    color: var(--text); margin: 0 0 20px; max-width: 18ch;
+  }
+  .lede{ font-size:1.03rem; color: var(--text-body); max-width:66ch; margin:0 0 30px; line-height:1.7; }
+
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap: 9px 32px;
+    font-size:.85rem; color: var(--text-body);
+    padding-bottom:28px; border-bottom:1px solid var(--border); margin-bottom:36px;
+  }
+  .meta-row strong{ color: var(--text); font-weight:600; margin-right:6px; }
+
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background: var(--border); border:1px solid var(--border); margin-bottom: 58px;
+  }
+  .stat{ background: var(--panel); padding: 22px 20px; }
+  .stat .v{ font-family:'JetBrains Mono', monospace; font-size:1.45rem; font-weight:600; color: var(--accent); margin-bottom:8px; }
+  .stat .l{ font-size:.81rem; color: var(--text-body); line-height:1.45; }
+
+  .section{ margin-bottom: 54px; scroll-margin-top: 30px; }
+  .section-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:6px; }
+  .section-head .n{ font-family:'JetBrains Mono', monospace; color: var(--accent); font-size:.9rem; }
+  .section-head h2{ font-family:'Source Serif 4', serif; font-weight:600; font-size:1.65rem; color: var(--text); margin:0; }
+  .section-desc{ color: var(--text-dim); font-style: italic; font-size:.9rem; margin: 0 0 26px 34px; }
+
+  .repo{ margin: 0 0 32px 34px; scroll-margin-top: 30px; }
+  .repo-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:4px; flex-wrap:wrap; }
+  .repo-head h3{ font-family:'Source Serif 4', serif; font-weight:600; font-size:1.12rem; color: var(--text); margin:0; }
+  .repo-count{ font-family:'JetBrains Mono', monospace; font-size:.75rem; color: var(--text-dim); }
+  .repo-desc{ color: var(--text-dim); font-size:.85rem; margin: 0 0 14px; font-style: italic; }
+
+  .entries{ border:1px solid var(--border); background: var(--panel); }
+  .entry{
+    display:grid; grid-template-columns: 5rem 1fr 6rem 6.4rem; gap:16px; align-items:center;
+    padding: 13px 18px; text-decoration:none; color:inherit;
+    border-bottom:1px solid var(--border); transition: background .15s ease;
+  }
+  .entry:last-child{ border-bottom:none; }
+  .entry:hover{ background: rgba(255,255,255,.03); }
+  .entry:hover .entry-title{ color: var(--accent); }
+
+  .entry-no{ font-family:'JetBrains Mono', monospace; font-size:.78rem; color: var(--text-dim); }
+  .entry-title{ font-size:.93rem; color: var(--text-body); line-height:1.4; transition: color .15s ease; }
+  .entry-date{ font-family:'JetBrains Mono', monospace; font-size:.73rem; color: var(--text-dim); }
+  .entry-status{
+    justify-self:start; font-family:'JetBrains Mono', monospace; font-size:.64rem;
+    letter-spacing:.07em; text-transform:uppercase; padding: 4px 9px;
+    border:1px solid currentColor; border-radius:3px;
+  }
+  .entry-status--merged{ color: var(--merged); }
+  .entry-status--reported{ color: var(--reported); }
+
+  .footer{
+    margin-top: 40px; padding-top: 24px; border-top:1px solid var(--border);
+    font-size:.82rem; color: var(--text-dim);
+  }
+  .footer a{ color: var(--text-body); text-decoration:none; }
+  .footer a:hover{ color: var(--accent); }
+
+  @media (max-width: 860px){
+    .page{ flex-direction:column; }
+    .sidebar{ position:relative; width:100%; height:auto; border-right:none; border-bottom:1px solid var(--border); padding:26px 22px; }
+    .nav{ display:none; }
+    .sidebar-block{ display:none; }
+    .main{ padding: 34px 20px 70px; }
+    .stat-grid{ grid-template-columns: repeat(2,1fr); }
+    .section-desc, .repo{ margin-left: 0; }
+
+    .entry{ display:flex; flex-wrap:wrap; column-gap:12px; row-gap:6px; padding:14px 16px; }
+    .entry-title{ flex-basis:100%; order:1; }
+    .entry-no{ order:2; }
+    .entry-date{ order:3; }
+    .entry-status{ order:4; margin-left:auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-name">KinshukSS2</span>
+    </div>
+    <p class="brand-sub">PULL REQUEST LOG</p>
+
+    <ul class="nav">
+      <li><a href="#overview"><span class="n">00</span>Overview</a></li>
+      <li><a href="#osgeo"><span class="n">01</span>OSGeo</a></li>
+      <li><a href="#istsos"><span class="n">02</span>istSOS</a></li>
+      <li><a href="#electron"><span class="n">03</span>Electron</a></li>
+    </ul>
+
+    <hr class="sidebar-rule" />
+
+    <div class="sidebar-block">
+      <h4>Repositories</h4>
+      <a href="https://github.com/OSGeo/gdal" target="_blank" rel="noopener">OSGeo/gdal</a>
+      <a href="https://github.com/OSGeo/PROJ" target="_blank" rel="noopener">OSGeo/PROJ</a>
+      <a href="https://github.com/istSOS/istSOS4" target="_blank" rel="noopener">istSOS/istSOS4</a>
+      <a href="https://github.com/electron/electron" target="_blank" rel="noopener">electron/electron</a>
+    </div>
+
+    <div class="sidebar-block">
+      <h4>Profile</h4>
+      <a href="https://github.com/KinshukSS2" target="_blank" rel="noopener">github.com/KinshukSS2</a>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+
+    <div id="overview" class="section">
+      <p class="eyebrow">OPEN SOURCE · CONTRIBUTION LOG</p>
+      <h1 class="headline">Pull Request Log</h1>
+      <p class="lede">
+        A record of merged pull requests and reported issues submitted by KinshukSS2 across
+        OSGeo, istSOS, and Electron, compiled from public GitHub activity.
+      </p>
+
+      <div class="meta-row">
+        <span><strong>Contributor</strong>KinshukSS2</span>
+        <span><strong>Organizations</strong>OSGeo, istSOS, Electron</span>
+        <span><strong>Repositories</strong>4</span>
+        <span><strong>Report date</strong>04 Sep 2026</span>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="v">28</div>
+          <div class="l">pull requests merged across all repositories</div>
+        </div>
+        <div class="stat">
+          <div class="v">1</div>
+          <div class="l">issue reported, later fixed upstream</div>
+        </div>
+        <div class="stat">
+          <div class="v">4</div>
+          <div class="l">repositories contributed to</div>
+        </div>
+        <div class="stat">
+          <div class="v">3</div>
+          <div class="l">organizations represented</div>
+        </div>
+        <div class="stat">
+          <div class="v">28 Oct 2025</div>
+          <div class="l">date of first merged pull request</div>
+        </div>
+        <div class="stat">
+          <div class="v">20 Apr 2026</div>
+          <div class="l">date of most recent merge</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= OSGeo ================= -->
+    <section id="osgeo" class="section">
+      <div class="section-head"><span class="n">01</span><h2>OSGeo</h2></div>
+      <p class="section-desc">Open Source Geospatial Foundation</p>
+
+      <div id="gdal" class="repo">
+        <div class="repo-head"><h3>gdal</h3><span class="repo-count">8 merged</span></div>
+        <p class="repo-desc">Translator library for raster and vector geospatial data formats</p>
+        <div class="entries">
+          <a class="entry" href="https://github.com/OSGeo/gdal/pull/14095" target="_blank" rel="noopener">
+            <span class="entry-no">#14095</span>
+            <span class="entry-title">ogr/osm: fix startic_cast typo in OSM_DEBUG block</span>
+            <span class="entry-date">09 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/OSGeo/gdal/pull/14093" target="_blank" rel="noopener">
+            <span class="entry-no">#14093</span>
+            <span class="entry-title">ogr: document why IsFieldNull always returns false for special fields</span>
+            <span class="entry-date">08 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/OSGeo/gdal/pull/14080" target="_blank" rel="noopener">
+            <span class="entry-no">#14080</span>
+            <span class="entry-title">docs: fixed broken external links in software_using_gdal.rst</span>
+            <span class="entry-date">06 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/OSGeo/gdal/pull/14078" target="_blank" rel="noopener">
+            <span class="entry-no">#14078</span>
+            <span class="entry-title">doc: update defunct Google Maps API signup link in gdal2tiles</span>
+            <span class="entry-date">05 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/OSGeo/gdal/pull/14055" target="_blank" rel="noopener">
+            <span class="entry-no">#14055</span>
+            <span class="entry-title">docs: Update broken Trac/SVN links to GitHub</span>
+            <span class="entry-date">02 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/OSGeo/gdal/pull/14038" target="_blank" rel="noopener">
+            <span class="entry-no">#14038</span>
+            <span class="entry-title">gdalgrid: apply ellipse rotation in quadtree path</span>
+            <span class="entry-date">01 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/OSGeo/gdal/pull/14036" target="_blank" rel="noopener">
+            <span class="entry-no">#14036</span>
+            <span class="entry-title">los: remove redundant IsAboveTerrain call to halve I/O</span>
+            <span class="entry-date">28 Feb 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/OSGeo/gdal/pull/14034" target="_blank" rel="noopener">
+            <span class="entry-no">#14034</span>
+            <span class="entry-title">Fix copy-paste typo in SSE RMS overview resampling</span>
+            <span class="entry-date">28 Feb 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+        </div>
+      </div>
+
+      <div id="proj" class="repo">
+        <div class="repo-head"><h3>PROJ</h3><span class="repo-count">1 merged</span></div>
+        <p class="repo-desc">Cartographic projections and coordinate transformations library</p>
+        <div class="entries">
+          <a class="entry" href="https://github.com/OSGeo/PROJ/pull/4692" target="_blank" rel="noopener">
+            <span class="entry-no">#4692</span>
+            <span class="entry-title">Refactor time parsing with thread-safe localtime and leap year fix</span>
+            <span class="entry-date">05 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= istSOS ================= -->
+    <section id="istsos" class="section">
+      <div class="section-head"><span class="n">02</span><h2>istSOS</h2></div>
+      <p class="section-desc">Institute of Earth Sciences — Sensor Observation Service (SUPSI)</p>
+
+      <div id="istsos4" class="repo">
+        <div class="repo-head"><h3>istSOS4</h3><span class="repo-count">18 merged</span></div>
+        <p class="repo-desc">Server implementation of the OGC SensorThings API in Python</p>
+        <div class="entries">
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/116" target="_blank" rel="noopener">
+            <span class="entry-no">#116</span>
+            <span class="entry-title">fix(auth): block refresh for revoked tokens</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/110" target="_blank" rel="noopener">
+            <span class="entry-no">#110</span>
+            <span class="entry-title">fix(auth): handle pool acquire type errors in authenticate_user</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/109" target="_blank" rel="noopener">
+            <span class="entry-no">#109</span>
+            <span class="entry-title">fix(rbac): harden custom policy creation and multi-user role targets</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/108" target="_blank" rel="noopener">
+            <span class="entry-no">#108</span>
+            <span class="entry-title">fix(rbac): harden policy update SQL composition</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/106" target="_blank" rel="noopener">
+            <span class="entry-no">#106</span>
+            <span class="entry-title">fix(rbac): require auth for /Users endpoint when AUTHORIZATION=1</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/90" target="_blank" rel="noopener">
+            <span class="entry-no">#90</span>
+            <span class="entry-title">fix(RBAC): validate SET ROLE identifiers</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/88" target="_blank" rel="noopener">
+            <span class="entry-no">#88</span>
+            <span class="entry-title">fix(api): replace deprecated Body example syntax</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/87" target="_blank" rel="noopener">
+            <span class="entry-no">#87</span>
+            <span class="entry-title">Fix: auth header redis ttl</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/76" target="_blank" rel="noopener">
+            <span class="entry-no">#76</span>
+            <span class="entry-title">fix: check revocation on refresh</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/72" target="_blank" rel="noopener">
+            <span class="entry-no">#72</span>
+            <span class="entry-title">Validate secret key config</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/71" target="_blank" rel="noopener">
+            <span class="entry-no">#71</span>
+            <span class="entry-title">Fix missing auth header crash</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/68" target="_blank" rel="noopener">
+            <span class="entry-no">#68</span>
+            <span class="entry-title">Security fix: tighten exception handling</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/62" target="_blank" rel="noopener">
+            <span class="entry-no">#62</span>
+            <span class="entry-title">Fix deprecation warnings</span>
+            <span class="entry-date">20 Apr 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/58" target="_blank" rel="noopener">
+            <span class="entry-no">#58</span>
+            <span class="entry-title">fix: guard auth Redis calls</span>
+            <span class="entry-date">13 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/50" target="_blank" rel="noopener">
+            <span class="entry-no">#50</span>
+            <span class="entry-title">Add timeout and error handling to authentication connections</span>
+            <span class="entry-date">13 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/48" target="_blank" rel="noopener">
+            <span class="entry-no">#48</span>
+            <span class="entry-title">Fix database write pool guard for unconfigured POSTGRES_PORT_WRITE</span>
+            <span class="entry-date">13 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/46" target="_blank" rel="noopener">
+            <span class="entry-no">#46</span>
+            <span class="entry-title">Added .env.example and updated README for setup instructions</span>
+            <span class="entry-date">13 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/istSOS/istSOS4/pull/44" target="_blank" rel="noopener">
+            <span class="entry-no">#44</span>
+            <span class="entry-title">Security fix: prevent SQL injection in user management DDL</span>
+            <span class="entry-date">13 Mar 2026</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Electron ================= -->
+    <section id="electron" class="section">
+      <div class="section-head"><span class="n">03</span><h2>Electron</h2></div>
+      <p class="section-desc">Framework for building cross-platform desktop apps with web technologies</p>
+
+      <div id="electron-electron" class="repo">
+        <div class="repo-head"><h3>electron</h3><span class="repo-count">1 merged, 1 reported</span></div>
+        <p class="repo-desc">The electron/electron core repository</p>
+        <div class="entries">
+          <a class="entry" href="https://github.com/electron/electron/pull/48639" target="_blank" rel="noopener">
+            <span class="entry-no">#48639</span>
+            <span class="entry-title">fix: use correct signal variable in nan-spec-runner install check</span>
+            <span class="entry-date">28 Oct 2025</span>
+            <span class="entry-status entry-status--merged">Merged</span>
+          </a>
+          <a class="entry" href="https://github.com/electron/electron/issues/48594" target="_blank" rel="noopener">
+            <span class="entry-no">#48594</span>
+            <span class="entry-title">Fix logical bug in checksums environment variable handling in npm/install.js</span>
+            <span class="entry-date">20 Oct 2025</span>
+            <span class="entry-status entry-status--reported">Reported</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>Generated 04 September 2026 from public GitHub records.</p>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
